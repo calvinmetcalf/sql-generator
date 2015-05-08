@@ -11,50 +11,60 @@ SQL Generator for node.js, fork of [this package](https://github.com/Shanon/node
 ### INSERT
 
 ```js
-    var sqlgen = require('create-sql');
-    var stmt = sqlgen.insert( 'test_table', // target table
-                              { foo: 1, bar: 'text', buz: '2011-10-10',
-                                ary_txt: [ 'a', 'b' ], ary_num: [ 1, 2 ] } // insert datas
-                            );
-    // it return this
-    // stmt = { sql: 'INSERT INTO test_table ( foo, bar, buz ) VALUES ( $1, $2, $3, ARRAY[ $4, $5 ], $6 )',
-                values: [ 1, 'text', '2011-10-10', 'a', 'a' ], '{1,2}' };
+var sqlgen = require('create-sql');
+    
+var stmt = sqlgen.insert('test_table', {
+  foo: 1,
+  bar: 'text',
+  buz: '2011-10-10',
+  ary_txt: ['a', 'b'],
+  ary_num: [1, 2]
+});
 
+// it return this
+// stmt = {
+//   sql: 'INSERT INTO test_table ( foo, bar, buz ) VALUES ( $1, $2, $3, ARRAY[ $4, $5 ], $6 )',
+//   values: [ 1, 'text', '2011-10-10', 'a', 'a' ], '{1,2}'
+// };
 ```
+
+
 ### SELECT
 
 ```js
-    var sqlgen = require('create-sql');
-    var stmt = sqlgen.select( 'base_table', // target table
-                              [ 'id' ], // target columns
-                              { id: { '>=': 33 } } // where section
-                            );
-    // it return this
-    // stmt = { sql: 'SELECT id FROM base_table WHERE id >= $1',
-    //          values: [ 33 ] };
+var sqlgen = require('create-sql');
+var stmt = sqlgen.select('base_table', ['id'], {
+  id: { '>=': 33 } // where selection
+});
+
+// it return this
+// stmt = {
+//   sql: 'SELECT id FROM base_table WHERE id >= $1',
+//   values: [33]
+// };
 
 
-    var stmt2 = sqlgen.select( 'test_table', // target table
-                               '*',          // target columns
-                               { foo: 1,                                         // foo = 1
-                                 bar: { '>=': 10 },                              // bar >= 10
-                                 buz: { '>': 100, '<': 200 },                    // buz > 100 AND buz < 200
-                                 hoge: { like: '%john%' },                       // hoge LIKE '%john%'
-                                 fuga: { IN: [ 1, 2, 3 ] },                      // fuga IN ( 1, 2, 3 )
-                                 moge: [ 6, 7, 8, { '!=': 9 } ],                 // ( moge = 6 OR moge = 7 OR moge = 8 OR moge != 9 )
-                                 puga: { '-and': [ 1, 2, 3 ] },                  // ( puga = 1 AND puga = 2 AND puga = 3 ),
-                                 '-or': { red: 1, blue: 2, green: { '!=': 3 } }, // ( red = 1 OR blue = 2 OR green != 3 )
-                                 base_table_id: { IN: { sql: stmt } }            // where section
-                               },
-                               { order: 'id' } // order section
-                             );
-    // it return this
-    // stmt2 = { sql: 'SELECT * FROM test_table \
-    //                 WHERE foo = $1 AND bar >= $2 AND buz > $3 AND buz < $4 AND hoge LIKE $5 \
-    //                       AND fuga IN ( $6, $7, $8 ) AND ( moge = $9 OR moge = $10 OR moge = $11 OR moge != $12 ) \
-    //                       AND ( red = $13 OR blue = $14 OR green != $15 ) \
-    //                       AND base_table_id IN ( SELECT id FROM base_table WHERE id >= $16 ) ORDER BY id',
-    //           values: [ 1, 10, 100, 200, '%john%', 1, 2, 3, 6, 7, 8, 9, 1, 2, 3, 33 ] };
+var stmt2 = sqlgen.select('test_table', '*', {
+  foo: 1,                                         // foo = 1
+  bar: { '>=': 10 },                              // bar >= 10
+  buz: { '>': 100, '<': 200 },                    // buz > 100 AND buz < 200
+  hoge: { like: '%john%' },                       // hoge LIKE '%john%'
+  fuga: { IN: [ 1, 2, 3 ] },                      // fuga IN ( 1, 2, 3 )
+  moge: [ 6, 7, 8, { '!=': 9 } ],                 // ( moge = 6 OR moge = 7 OR moge = 8 OR moge != 9 )
+  puga: { '-and': [ 1, 2, 3 ] },                  // ( puga = 1 AND puga = 2 AND puga = 3 ),
+  '-or': { red: 1, blue: 2, green: { '!=': 3 } }, // ( red = 1 OR blue = 2 OR green != 3 )
+  base_table_id: { IN: { sql: stmt } }            // where section
+}, { order: 'id' });
+    
+// it return this
+// stmt2 = {
+//   sql: 'SELECT * FROM test_table \
+//     WHERE foo = $1 AND bar >= $2 AND buz > $3 AND buz < $4 AND hoge LIKE $5 \
+//       AND fuga IN ( $6, $7, $8 ) AND ( moge = $9 OR moge = $10 OR moge = $11 OR moge != $12 ) \
+//       AND ( red = $13 OR blue = $14 OR green != $15 ) \
+//       AND base_table_id IN ( SELECT id FROM base_table WHERE id >= $16 ) ORDER BY id',
+//   values: [1, 10, 100, 200, '%john%', 1, 2, 3, 6, 7, 8, 9, 1, 2, 3, 33]
+// };
 
     // columns of type ARRAY
     var ary_stmt = sqlgen.select( 'array_table', // target table
@@ -102,6 +112,7 @@ SQL Generator for node.js, fork of [this package](https://github.com/Shanon/node
     // it return this
     // stmt = { sql: 'DELETE FROM test_table WHERE some_flag = $1',
                 values: [ 1 ] };
+```
 
 ## License
 
