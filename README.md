@@ -112,6 +112,7 @@ var stmt2 = sqlgen.select('test_table', '*', {
     // it return this
     // stmt = { sql: 'DELETE FROM test_table WHERE some_flag = $1',
                 values: [ 1 ] };
+```
 
 ## License
 
